@@ -78,17 +78,7 @@ function getEmitter() {
                 }
             }
             for (let ev of eventNotForSub) {
-                if (events[ev]) {
-                    events[ev].forEach(subscriber => {
-                        if (subscriber.times && subscriber.count % subscriber.frequency === 0) {
-                            subscriber.times--;
-                            subscriber.handler.call(subscriber.context);
-                            subscriber.count++;
-                        } else {
-                            subscriber.count++;
-                        }
-                    });
-                }
+                events[ev] = events[ev].filter(e => e.name !== context);
             }
 
             return this;
@@ -100,10 +90,20 @@ function getEmitter() {
          * @returns {object}
          */
         emit: function (event) {
-            const studentToNotify = getParentEvent(event)
-                .filter(e => events[e] !== undefined)
-                .map(e => events[e]);
-            studentToNotify.map(e => e.map(st => st.function.call(st.name)));
+            const studentToNotify = getParentEvent(event);
+            for (let ev of eventNotForSub) {
+                if (events[ev]) {
+                    events[ev].forEach(subscriber => {
+                        if (subscriber !== undefined && subscriber.times && subscriber.count % subscriber.frequency === 0) {
+                            subscriber.times--;
+                            subscriber.handler.call(subscriber.context);
+                            subscriber.count++;
+                        } else {
+                            subscriber.count++;
+                        }
+                    });
+                }
+            }
 
             return this;
         },
