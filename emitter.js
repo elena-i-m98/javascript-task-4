@@ -40,7 +40,7 @@ function getEmitter() {
      * @param {Number} times – сколько раз получить уведомление
      * @param {Number} frequency – как часто уведомлять
      */
-    function subscribeStudentOnEvent({event, context, handler, times, frequency}) {
+    function subscribeStudentOnEvent({ event, context, handler, times, frequency }) {
         if (!events[event]) {
             events[event] = [];
         }
