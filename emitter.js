@@ -12,18 +12,6 @@ const isStar = false;
  * @param {String} event
  * @returns {String[]}
  */
-function getParentEvent(event) {
-    let result = [];
-    const parent = event.split('.')[0];
-    if (event !== undefined) {
-        result.push(event);
-    }
-    if (event !== undefined && parent !== undefined && parent !== event) {
-        result.push(parent);
-    }
-
-    return result;
-}
 
 /**
  * Возвращает новый emitter
@@ -74,12 +62,9 @@ function getEmitter() {
                     eventNotForSub.push(key);
                 }
             }
-            eventNotForSub.forEach(ev => {
-                if (Array.isArray(events[ev]) &&
-                    events[ev].length > 0) {
-                    events[ev] = events[ev].filter(e => e.name !== context);
-                }
-            });
+            for (let ev of eventNotForSub) {
+                events[ev] = events[ev].filter(e => e.name !== context);
+            }
 
             return this;
         },
@@ -90,10 +75,14 @@ function getEmitter() {
          * @returns {object}
          */
         emit: function (event) {
-            const studentToNotify = getParentEvent(event)
-                .filter(e => events[e] !== undefined)
-                .map(e => events[e]);
-            studentToNotify.map(e => e.map(st => st.function.call(st.name)));
+            while (event) {
+                if (events[event]) {
+                    events[event].forEach(st => {
+                        st.function.call(st.name);
+                    });
+                }
+                event = event.substring(0, event.indexOf('.'));
+            }
 
             return this;
         },
