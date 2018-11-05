@@ -14,17 +14,6 @@ const isStar = false;
  */
 
 /**
- * проверить вход
- */
-function checkArguments() {
-    for (let arg = 0; arg < arguments.length; arg++) {
-        if (!arguments[arg]) { // если поступившего аргумента нет, значит ввод неправильный
-            throw new TypeError('Неверные входные данные');
-        }
-    }
-}
-
-/**
  * Возвращает новый emitter
  * @returns {Object}
  */
@@ -54,7 +43,6 @@ function getEmitter() {
          * @returns {Object}
          */
         on: function (event, context, handler) {
-            checkArguments(event, context, handler);
             const student = { name: context, function: handler };
             subscribeStudentOnEvent(event, student);
 
@@ -68,16 +56,18 @@ function getEmitter() {
          * @returns {Object}
          */
         off: function (event, context) {
-            checkArguments(event, context);
-            let eventNotForSub = [event];
-            for (let key of Object.keys(events)) {
-                if (key.startsWith(event + '.')) {
-                    eventNotForSub.push(key);
+            // let eventNotForSub = [event];
+            const eventsNotForSub = Object.keys(subscriptions)
+                .filter(action => action.startsWith('${event}.') || action === event);
+
+                eventsNotForSub.forEach(eventToDecr => {
+                if (Array.isArray(events[eventToDecr]) &&
+                 events[eventToDecr].length > 0) {
+
+                    events[eventToDecr] = events[eventToDecr]
+                        .filter(student => student.context !== context);
                 }
-            }
-            for (let ev of eventNotForSub) {
-                events[ev] = events[ev].filter(e => e.name !== context);
-            }
+            });
 
             return this;
         },
@@ -93,8 +83,8 @@ function getEmitter() {
                     events[event].forEach(st => {
                         st.function.call(st.name);
                     });
+                    event = event.substring(0, event.indexOf('.'));
                 }
-                event = event.substring(0, event.indexOf('.'));
             }
 
             return this;
