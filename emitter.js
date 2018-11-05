@@ -106,7 +106,7 @@ function getEmitter() {
          * @param {Function} handler
          * @param {?Number} times – сколько раз получить уведомление
          */
-        several: function (event, context, handler, times) {
+        several: function (event, context, handler, times = Infinity) {
             // console.info(event, context, handler, times);
             subscribeStudentOnEvent(event, context, handler, times);
         },
@@ -119,7 +119,7 @@ function getEmitter() {
          * @param {Function} handler
          * @param {?Number} frequency – как часто уведомлять
          */
-        through: function (event, context, handler) {
+        through: function (event, context, handler, frequency = 1) {
             // console.info(event, context, handler, frequency);
             subscribeStudentOnEvent(event, context, handler, frequency);
         }
