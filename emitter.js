@@ -91,7 +91,7 @@ function getEmitter() {
          */
         emit: function (event) {
             const studentToNotify = getParentEvent(event);
-            for (let ev of eventNotForSub) {
+            for (let ev of studentToNotify) {
                 if (events[ev]) {
                     events[ev].forEach(subscriber => {
                         if (subscriber !== undefined && subscriber.times && subscriber.count % subscriber.frequency === 0) {
