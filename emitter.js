@@ -40,12 +40,18 @@ function getEmitter() {
      * @param {Number} times – сколько раз получить уведомление
      * @param {Number} frequency – как часто уведомлять
      */
-    function subscribeStudentOnEvent({event, context, handler, times = Infinity, frequency = 1}) {
-        if (events[event] === undefined) {
-            events[event] = [{ context, handler, times, frequency, count: 0 }];
-        } else {
-            events[event].push({ context, handler, times, frequency, count: 0 });
+    function subscribeStudentOnEvent({event, context, handler, times, frequency}) {
+        if (!events[event]) {
+            events[event] = [];
         }
+        if (!times) {
+            times = Infinity;
+        }
+        if (!frequency) {
+            frequency = 1;
+        }
+
+        events[event].push({ context, handler, times, frequency, count: 0 });
     }
 
     return {
@@ -121,7 +127,7 @@ function getEmitter() {
          */
         through: function (event, context, handler, frequency = 1) {
             // console.info(event, context, handler, frequency);
-            subscribeStudentOnEvent(event, context, handler, frequency);
+            subscribeStudentOnEvent(event, context, handler, undefined, frequency);
         }
     };
 }
