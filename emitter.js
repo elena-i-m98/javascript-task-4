@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализованы методы several и through
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Возвращает массив событий (текущий + его отец)
@@ -35,13 +35,16 @@ function getEmitter() {
     /**
      * Производит подписку объекта (студент) на событие
      * @param {String} event
-     * @param {object} student
+     * @param {object} context
+     * @param {Function} handler
+     * @param {Number} times – сколько раз получить уведомление
+     * @param {Number} frequency – как часто уведомлять
      */
-    function subscribeStudentOnEvent(event, student) {
-        if (!events[event]) {
-            events[event] = [student];
+    function subscribeStudentOnEvent({event, context, handler, times = Infinity, frequency = 1}) {
+        if (events[event] === undefined) {
+            events[event] = [{ context, handler, times, frequency, count: 0 }];
         } else {
-            events[event].push(student);
+            events[event].push({ context, handler, times, frequency, count: 0 });
         }
     }
 
@@ -55,8 +58,8 @@ function getEmitter() {
          * @returns {Object}
          */
         on: function (event, context, handler) {
-            const student = { name: context, function: handler };
-            subscribeStudentOnEvent(event, student);
+            // const student = { name: context, function: handler };
+            subscribeStudentOnEvent(event, context, handler);
 
             return this;
         },
@@ -101,10 +104,11 @@ function getEmitter() {
          * @param {String} event
          * @param {Object} context
          * @param {Function} handler
-         * @param {Number} times – сколько раз получить уведомление
+         * @param {?Number} times – сколько раз получить уведомление
          */
-        several: function (event, context, handler, times) {
-            console.info(event, context, handler, times);
+        several: function (event, context, handler, times = Infinity) {
+            // console.info(event, context, handler, times);
+            subscribeStudentOnEvent(event, context, handler, times);
         },
 
         /**
@@ -113,10 +117,11 @@ function getEmitter() {
          * @param {String} event
          * @param {Object} context
          * @param {Function} handler
-         * @param {Number} frequency – как часто уведомлять
+         * @param {?Number} frequency – как часто уведомлять
          */
-        through: function (event, context, handler, frequency) {
-            console.info(event, context, handler, frequency);
+        through: function (event, context, handler, frequency = 1) {
+            // console.info(event, context, handler, frequency);
+            subscribeStudentOnEvent(event, context, handler, frequency);
         }
     };
 }
