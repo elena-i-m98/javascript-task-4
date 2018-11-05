@@ -14,6 +14,17 @@ const isStar = false;
  */
 
 /**
+ * проверить вход
+ */
+function checkArguments() {
+    for (let arg = 0; arg < arguments.length; arg++) {
+        if (!arguments[arg]) { // если поступившего аргумента нет, значит ввод неправильный
+            throw new TypeError('Неверные входные данные');
+        }
+    }
+}
+
+/**
  * Возвращает новый emitter
  * @returns {Object}
  */
@@ -43,6 +54,7 @@ function getEmitter() {
          * @returns {Object}
          */
         on: function (event, context, handler) {
+            checkArguments(event, context, handler);
             const student = { name: context, function: handler };
             subscribeStudentOnEvent(event, student);
 
@@ -56,6 +68,7 @@ function getEmitter() {
          * @returns {Object}
          */
         off: function (event, context) {
+            checkArguments(event, context);
             let eventNotForSub = [event];
             for (let key of Object.keys(events)) {
                 if (key.startsWith(event + '.')) {
