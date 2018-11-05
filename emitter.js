@@ -55,9 +55,12 @@ function getEmitter() {
                     eventNotForSub.push(key);
                 }
             }
-            for (let ev of eventNotForSub) {
-                events[ev] = events[ev].filter(e => e.name !== context);
-            }
+            eventNotForSub.forEach(eventNotSub => {
+                if (Array.isArray(events[eventNotSub]) &&
+                 events[eventNotSub].length > 0) {
+                    events[eventNotSub] = events[eventNotSub].filter(e => e.name !== context);
+                }
+            });
 
             return this;
         },
