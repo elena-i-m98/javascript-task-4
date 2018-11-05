@@ -94,7 +94,9 @@ function getEmitter() {
             for (let ev of studentToNotify) {
                 if (events[ev]) {
                     events[ev].forEach(subscriber => {
-                        if (subscriber !== undefined && subscriber.times && subscriber.count % subscriber.frequency === 0) {
+                        if (subscriber !== undefined &&
+                             subscriber.times &&
+                             subscriber.count % subscriber.frequency === 0) {
                             subscriber.times--;
                             subscriber.handler.call(subscriber.context);
                             subscriber.count++;
