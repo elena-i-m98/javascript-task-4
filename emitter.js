@@ -57,7 +57,7 @@ function getEmitter() {
          */
         off: function (event, context) {
             // let eventNotForSub = [event];
-            const eventsNotForSub = Object.keys(subscriptions)
+            const eventsNotForSub = Object.keys(events)
                 .filter(action => action.startsWith(`${event}.`) || action === event);
 
             eventsNotForSub.forEach(eventToDecr => {
