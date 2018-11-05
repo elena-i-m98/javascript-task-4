@@ -70,7 +70,7 @@ function getEmitter() {
          * @param {Object} context
          * @returns {Object}
          */
-        off: function (event, context) {
+        off: function (event) {
             let eventNotForSub = [event];
             for (let key of Object.keys(events)) {
                 if (key.startsWith(event + '.')) {
