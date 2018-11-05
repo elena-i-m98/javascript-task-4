@@ -78,16 +78,17 @@ function getEmitter() {
                 }
             }
             for (let ev of eventNotForSub) {
-                events[ev] = events[ev].filter(e => e.name !== context)
-                    .map(sub => {
-                        if (sub.times && sub.count % sub.frequency === 0) {
-                            sub.times--;
-                            sub.handler.call(sub.context);
-                            sub.count++;
+                if (events[ev]) {
+                    events[ev].forEach(subscriber => {
+                        if (subscriber.times && subscriber.count % subscriber.frequency === 0) {
+                            subscriber.times--;
+                            subscriber.handler.call(subscriber.context);
+                            subscriber.count++;
                         } else {
-                            sub.count++;
+                            subscriber.count++;
                         }
                     });
+                }
             }
 
             return this;
