@@ -4,13 +4,47 @@
  * Сделано задание на звездочку
  * Реализованы методы several и through
  */
-const isStar = true;
+const isStar = false;
+
+/**
+ * Возвращает массив событий (текущий + его отец)
+ * в правильном порядке, например, [slide.fanny, slide]
+ * @param {String} event
+ * @returns {String[]}
+ */
+function getParentEvent(event) {
+    let result = [];
+    const parent = event.split('.')[0];
+    if (event !== undefined) {
+        result.push(event);
+    }
+    if (event !== undefined && parent !== undefined && parent !== event) {
+        result.push(parent);
+    }
+
+    return result;
+}
 
 /**
  * Возвращает новый emitter
  * @returns {Object}
  */
 function getEmitter() {
+    const events = {};
+
+    /**
+     * Производит подписку объекта (студент) на событие
+     * @param {String} event
+     * @param {object} student
+     */
+    function subscribeStudentOnEvent(event, student) {
+        if (events[event] === undefined) {
+            events[event] = [student];
+        } else {
+            events[event].push(student);
+        }
+    }
+
     return {
 
         /**
@@ -18,26 +52,47 @@ function getEmitter() {
          * @param {String} event
          * @param {Object} context
          * @param {Function} handler
+         * @returns {Object}
          */
         on: function (event, context, handler) {
-            console.info(event, context, handler);
+            const student = { name: context, function: handler };
+            subscribeStudentOnEvent(event, student);
+
+            return this;
         },
 
         /**
          * Отписаться от события
          * @param {String} event
          * @param {Object} context
+         * @returns {Object}
          */
         off: function (event, context) {
-            console.info(event, context);
+            let eventNotForSub = [event];
+            for (let key of Object.keys(events)) {
+                if (key.startsWith(event + '.')) {
+                    eventNotForSub.push(key);
+                }
+            }
+            for (let ev of eventNotForSub) {
+                events[ev] = events[ev].filter(e => e.name !== context);
+            }
+
+            return this;
         },
 
         /**
          * Уведомить о событии
          * @param {String} event
+         * @returns {object}
          */
         emit: function (event) {
-            console.info(event);
+            const studentToNotify = getParentEvent(event)
+                .filter(e => events[e] !== undefined)
+                .map(e => events[e]);
+            studentToNotify.map(e => e.map(st => st.function.call(st.name)));
+
+            return this;
         },
 
         /**
