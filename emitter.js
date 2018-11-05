@@ -7,13 +7,6 @@
 const isStar = false;
 
 /**
- * Возвращает массив событий (текущий + его отец)
- * в правильном порядке, например, [slide.fanny, slide]
- * @param {String} event
- * @returns {String[]}
- */
-
-/**
  * Возвращает новый emitter
  * @returns {Object}
  */
@@ -56,18 +49,15 @@ function getEmitter() {
          * @returns {Object}
          */
         off: function (event, context) {
-            // let eventNotForSub = [event];
-            const eventsNotForSub = Object.keys(events)
-                .filter(action => action.startsWith(`${event}.`) || action === event);
-
-            eventsNotForSub.forEach(eventToDecr => {
-                if (Array.isArray(events[eventToDecr]) &&
-                 events[eventToDecr].length > 0) {
-
-                    events[eventToDecr] = events[eventToDecr]
-                        .filter(student => student.context !== context);
+            let eventNotForSub = [event];
+            for (let key of Object.keys(events)) {
+                if (key.startsWith(event + '.')) {
+                    eventNotForSub.push(key);
                 }
-            });
+            }
+            for (let ev of eventNotForSub) {
+                events[ev] = events[ev].filter(e => e.name !== context);
+            }
 
             return this;
         },
@@ -80,12 +70,11 @@ function getEmitter() {
         emit: function (event) {
             while (event) {
                 if (events[event]) {
-                    events[event].forEach(st => {
-                        st.function.call(st.name);
-                    });
-                    event = event.substring(0, event.indexOf('.'));
+                    events[event].forEach(student => student.function.call(student.name));
                 }
+                event = event.substr(0, event.lastIndexOf('.'));
             }
+
 
             return this;
         },
