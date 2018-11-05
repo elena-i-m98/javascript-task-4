@@ -40,7 +40,7 @@ function getEmitter() {
      * @param {Number} times – сколько раз получить уведомление
      * @param {Number} frequency – как часто уведомлять
      */
-    function subscribeStudentOnEvent({event, context, handler, times = Infinity, frequency = 1}) {
+    function subscribeStudentOnEvent({ event, context, handler, times = Infinity, frequency = 1 }) {
         if (events[event] === undefined) {
             events[event] = [{ context, handler, times, frequency, count: 0 }];
         } else {
@@ -79,8 +79,8 @@ function getEmitter() {
             }
             for (let ev of eventNotForSub) {
                 events[ev] = events[ev].filter(e => e.name !== context)
-                    .forEach(sub => {
-                        if (sub.times && subscriber.count % subscriber.frequency === 0) {
+                    .map(sub => {
+                        if (sub.times && sub.count % sub.frequency === 0) {
                             sub.times--;
                             sub.handler.call(sub.context);
                             sub.count++;
