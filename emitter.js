@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализованы методы several и through
  */
-const isStar = false;
+const isStar = true;
 
 /**
  * Возвращает новый emitter
@@ -36,7 +36,8 @@ function getEmitter() {
          * @returns {Object}
          */
         on: function (event, context, handler) {
-            const student = { name: context, function: handler };
+            const student = { name: context, function: handler,
+                times: Infinity, frequency: 1, count: 0 };
             subscribeStudentOnEvent(event, student);
 
             return this;
@@ -73,11 +74,18 @@ function getEmitter() {
         emit: function (event) {
             while (event) {
                 if (events[event]) {
-                    events[event].forEach(student => student.function.call(student.name));
+                    events[event].forEach(student => {
+                        if (student.times && student.count % student.frequency === 0) {
+                            student.times--;
+                            student.function.call(student.name);
+                            student.count++;
+                        } else {
+                            student.count++;
+                        }
+                    });
                 }
                 event = event.substr(0, event.lastIndexOf('.'));
             }
-
 
             return this;
         },
@@ -89,9 +97,14 @@ function getEmitter() {
          * @param {Object} context
          * @param {Function} handler
          * @param {Number} times – сколько раз получить уведомление
+         * @returns {object}
          */
         several: function (event, context, handler, times) {
             console.info(event, context, handler, times);
+            const student = { name: context, function: handler, times, frequency: 1, count: 0 };
+            subscribeStudentOnEvent(event, student);
+
+            return this;
         },
 
         /**
@@ -101,9 +114,15 @@ function getEmitter() {
          * @param {Object} context
          * @param {Function} handler
          * @param {Number} frequency – как часто уведомлять
+         * @returns {object}
          */
         through: function (event, context, handler, frequency) {
             console.info(event, context, handler, frequency);
+            const student = { name: context, function: handler,
+                times: Infinity, frequency, count: 0 };
+            subscribeStudentOnEvent(event, student);
+
+            return this;
         }
     };
 }
