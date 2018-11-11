@@ -49,13 +49,13 @@ function getEmitter() {
          * @returns {Object}
          */
         off: function (event, context) {
-            let eventNotForSub = [event];
-            for (let key of Object.keys(events)) {
+            let eventsForUnsubcribe = [event];
+            Object.keys(events).forEach(key => {
                 if (key.startsWith(event + '.')) {
-                    eventNotForSub.push(key);
+                    eventsForUnsubcribe.push(key);
                 }
-            }
-            eventNotForSub.forEach(eventNotSub => {
+            });
+            eventsForUnsubcribe.forEach(eventNotSub => {
                 if (Array.isArray(events[eventNotSub]) &&
                  events[eventNotSub].length > 0) {
                     events[eventNotSub] = events[eventNotSub].filter(e => e.name !== context);
